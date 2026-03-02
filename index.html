@@ -1,0 +1,1356 @@
+<!doctype html>
+<html lang="lv" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ekonomikas Meistars</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Space Grotesk', sans-serif; }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #0A0E27 0%, #1a1f3a 50%, #0A0E27 100%);
+    }
+    
+    .card-glow {
+      box-shadow: 0 0 30px rgba(0, 212, 255, 0.1);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #00D4FF 0%, #0099cc 100%);
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+    }
+    
+    .gold-accent {
+      color: #FFD700;
+    }
+    
+    .progress-bar {
+      background: linear-gradient(90deg, #00D4FF 0%, #FFD700 100%);
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    .float-animation {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(0, 212, 255, 0.6); }
+    }
+    
+    .pulse-glow {
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .slide-in {
+      animation: slideIn 0.5s ease-out forwards;
+    }
+    
+    .theory-card {
+      background: linear-gradient(145deg, #141833 0%, #1a1f3a 100%);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+    }
+    
+    .theory-card:hover {
+      border-color: rgba(0, 212, 255, 0.5);
+      transform: translateY(-5px);
+      transition: all 0.3s ease;
+    }
+    
+    .option-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .option-btn:hover {
+      background: rgba(0, 212, 255, 0.1);
+      border-color: #00D4FF;
+    }
+    
+    .option-btn.selected {
+      background: rgba(0, 212, 255, 0.2);
+      border-color: #00D4FF;
+    }
+    
+    .option-btn.correct {
+      background: rgba(34, 197, 94, 0.2);
+      border-color: #22c55e;
+    }
+    
+    .option-btn.incorrect {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: #ef4444;
+    }
+    
+    .badge-card {
+      background: linear-gradient(145deg, #1a1f3a 0%, #252b4a 100%);
+    }
+    
+    .leaderboard-row {
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+    }
+    
+    .leaderboard-row:hover {
+      background: rgba(0, 212, 255, 0.05);
+    }
+    
+    .scroll-container {
+      scrollbar-width: thin;
+      scrollbar-color: #00D4FF #1a1f3a;
+    }
+    
+    .scroll-container::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .scroll-container::-webkit-scrollbar-track {
+      background: #1a1f3a;
+    }
+    
+    .scroll-container::-webkit-scrollbar-thumb {
+      background: #00D4FF;
+      border-radius: 3px;
+    }
+
+    /* Matching / ordering styles */
+    .match-item {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      user-select: none;
+    }
+    
+    .match-item:hover {
+      background: rgba(0, 212, 255, 0.1);
+      border-color: #00D4FF;
+    }
+    
+    .match-item.active {
+      background: rgba(0, 212, 255, 0.25);
+      border-color: #00D4FF;
+      box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+    }
+    
+    .match-item.matched {
+      background: rgba(34, 197, 94, 0.15);
+      border-color: #22c55e;
+      cursor: default;
+    }
+    
+    .match-item.wrong-match {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: #ef4444;
+      animation: shake 0.4s ease;
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    
+    .match-line {
+      stroke: #22c55e;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .order-item {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      padding: 12px 16px;
+      border-radius: 10px;
+      cursor: grab;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+    
+    .order-item:hover {
+      background: rgba(0, 212, 255, 0.1);
+    }
+    
+    .order-item.dragging {
+      opacity: 0.5;
+      border-color: #00D4FF;
+    }
+    
+    .order-item.drag-over {
+      border-color: #FFD700;
+      background: rgba(255, 215, 0, 0.1);
+    }
+
+    .order-item .order-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(0, 212, 255, 0.3);
+      font-size: 12px;
+      font-weight: 700;
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+
+    .order-item.correct-order {
+      background: rgba(34, 197, 94, 0.15);
+      border-color: #22c55e;
+    }
+    
+    .order-item.incorrect-order {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: #ef4444;
+    }
+
+    .tf-btn {
+      flex: 1;
+      padding: 16px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .tf-true {
+      background: rgba(34, 197, 94, 0.1);
+      border: 2px solid rgba(34, 197, 94, 0.4);
+      color: #22c55e;
+    }
+    .tf-true:hover { background: rgba(34, 197, 94, 0.2); }
+    .tf-true.selected { background: rgba(34, 197, 94, 0.3); border-color: #22c55e; }
+
+    .tf-false {
+      background: rgba(239, 68, 68, 0.1);
+      border: 2px solid rgba(239, 68, 68, 0.4);
+      color: #ef4444;
+    }
+    .tf-false:hover { background: rgba(239, 68, 68, 0.2); }
+    .tf-false.selected { background: rgba(239, 68, 68, 0.3); border-color: #ef4444; }
+
+    .tf-btn.was-correct {
+      background: rgba(34, 197, 94, 0.3) !important;
+      border-color: #22c55e !important;
+      color: #22c55e !important;
+    }
+    .tf-btn.was-incorrect {
+      background: rgba(239, 68, 68, 0.3) !important;
+      border-color: #ef4444 !important;
+      color: #ef4444 !important;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+ </head>
+ <body class="h-full gradient-bg text-white">
+  <div id="app" class="h-full overflow-auto scroll-container">
+   <!-- SCREEN 1: Registration -->
+   <div id="screen-registration" class="min-h-full flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+     <div class="text-center mb-8">
+      <div class="text-6xl mb-4 float-animation">💰</div>
+      <h1 id="game-title" class="text-3xl md:text-4xl font-bold mb-2"><span class="text-cyan-400">Ekonomikas</span> <span class="gold-accent">Meistars</span></h1>
+      <p class="text-gray-400">12. klases ekonomikas spēle</p>
+     </div>
+     <div class="theory-card rounded-2xl p-6 card-glow">
+      <h2 class="text-xl font-semibold mb-6 text-center">Reģistrācija</h2>
+      <div class="space-y-4">
+       <div><label class="block text-sm text-gray-400 mb-2">Vārds</label><input type="text" id="input-name" placeholder="Ievadi savu vārdu" class="w-full bg-gray-800/50 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-cyan-400 focus:outline-none transition-colors"></div>
+       <div><label class="block text-sm text-gray-400 mb-2">Uzvārds</label><input type="text" id="input-surname" placeholder="Ievadi savu uzvārdu" class="w-full bg-gray-800/50 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-cyan-400 focus:outline-none transition-colors"></div>
+       <div><label class="block text-sm text-gray-400 mb-2">Klase</label><input type="text" id="input-class" placeholder="Piemēram: 12.a" class="w-full bg-gray-800/50 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-cyan-400 focus:outline-none transition-colors"></div>
+      </div>
+      <button id="btn-start" class="w-full btn-primary text-white font-semibold py-4 rounded-xl mt-6 flex items-center justify-center gap-2"><span>Sākt spēli</span><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></button>
+      <p id="reg-error" class="text-red-400 text-sm text-center mt-4 hidden">Lūdzu aizpildi visus laukus!</p>
+     </div>
+    </div>
+   </div>
+
+   <!-- SCREEN 2: Theory Module -->
+   <div id="screen-theory" class="min-h-full p-4 hidden">
+    <div class="max-w-4xl mx-auto py-8">
+     <div class="text-center mb-8">
+      <h2 class="text-2xl md:text-3xl font-bold mb-2">📚 Teorijas modulis</h2>
+      <p class="text-gray-400">Izlasi visas kartiņas pirms testa sākšanas</p>
+     </div>
+     <div class="grid md:grid-cols-2 gap-6 mb-8">
+      <!-- Card 1 -->
+      <div class="theory-card rounded-xl p-6 cursor-pointer" onclick="toggleCard(1)">
+       <div class="flex items-center gap-3 mb-4"><span class="text-3xl">⏰</span>
+        <h3 class="text-lg font-semibold text-cyan-400">Naudas vērtība laikā</h3>
+       </div>
+       <div id="card-content-1" class="hidden">
+        <div class="space-y-3 text-sm text-gray-300">
+         <p><strong class="text-white">Inflācija</strong> – vispārējā cenu līmeņa paaugstināšanās, kas samazina naudas pirktspēju.</p>
+         <p><strong class="text-white">Deflācija</strong> – cenu līmeņa pazemināšanās, kas palielina naudas pirktspēju.</p>
+         <p><strong class="text-white">Pirktspēja</strong> – preču un pakalpojumu daudzums, ko var iegādāties par noteiktu naudas summu.</p>
+         <div class="bg-gray-800/50 rounded-lg p-3 mt-3">
+          <p class="text-xs text-gray-400 mb-1">Reālā vs nominālā vērtība:</p>
+          <p>Nominālā vērtība = summa uz papīra</p>
+          <p>Reālā vērtība = pirktspēja, ņemot vērā inflāciju</p>
+         </div>
+         <div class="bg-cyan-900/30 rounded-lg p-3 border border-cyan-800">
+          <p class="text-xs gold-accent mb-1">📊 Piemērs:</p>
+          <p>Latvijā 2025. gadā inflācija ~3.5%. ECB mērķis ir 2%.</p>
+          <p class="text-xs text-gray-400">Reālā procentu likme = nominālā likme − inflācija</p>
+         </div>
+        </div>
+       </div>
+       <p id="card-hint-1" class="text-xs text-gray-500 mt-2">Klikšķini, lai atvērtu →</p>
+      </div>
+      <!-- Card 2 -->
+      <div class="theory-card rounded-xl p-6 cursor-pointer" onclick="toggleCard(2)">
+       <div class="flex items-center gap-3 mb-4"><span class="text-3xl">📈</span>
+        <h3 class="text-lg font-semibold text-cyan-400">Faktori, kas ietekmē naudas vērtību</h3>
+       </div>
+       <div id="card-content-2" class="hidden">
+        <div class="space-y-3 text-sm text-gray-300">
+         <div>
+          <p class="text-white font-medium mb-1">🏠 Lokālie faktori:</p>
+          <ul class="list-disc list-inside text-xs space-y-1 ml-2">
+           <li>Algu līmenis un nodarbinātība</li>
+           <li>Mājokļu un pārtikas cenas</li>
+           <li>Vietējā inflācija (CSP dati)</li>
+           <li>Valdības fiskālā politika</li>
+          </ul>
+         </div>
+         <div>
+          <p class="text-white font-medium mb-1">🌍 Globālie faktori:</p>
+          <ul class="list-disc list-inside text-xs space-y-1 ml-2">
+           <li>Naftas un gāzes cenas</li>
+           <li>ASV tarifu politika un tirdzniecības kari</li>
+           <li>Ģeopolitiskie konflikti</li>
+           <li>Valūtas kursu svārstības</li>
+          </ul>
+         </div>
+         <div class="bg-yellow-900/30 rounded-lg p-3 border border-yellow-800">
+          <p class="text-xs gold-accent mb-1">🏦 ECB procentu likmes (2025):</p>
+          <p class="text-xs">Depozītu likme: 2.0% | Galvenā refinansēšanas: 2.15%</p>
+          <p class="text-xs text-gray-400 mt-1">Augstākas likmes = dārgāki kredīti = mazāks pieprasījums</p>
+         </div>
+        </div>
+       </div>
+       <p id="card-hint-2" class="text-xs text-gray-500 mt-2">Klikšķini, lai atvērtu →</p>
+      </div>
+      <!-- Card 3 -->
+      <div class="theory-card rounded-xl p-6 cursor-pointer" onclick="toggleCard(3)">
+       <div class="flex items-center gap-3 mb-4"><span class="text-3xl">💳</span>
+        <h3 class="text-lg font-semibold text-cyan-400">Norēķinu veidi</h3>
+       </div>
+       <div id="card-content-3" class="hidden">
+        <div class="space-y-3 text-sm text-gray-300">
+         <table class="w-full text-xs">
+          <thead>
+           <tr class="border-b border-gray-700">
+            <th class="text-left py-2">Veids</th>
+            <th class="text-left py-2 text-green-400">+</th>
+            <th class="text-left py-2 text-red-400">−</th>
+           </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-800">
+           <tr><td class="py-2">💵 Skaidra nauda</td><td class="py-2">Anonīms, nav komisijas</td><td class="py-2">Zādzības risks</td></tr>
+           <tr><td class="py-2">🏦 Pārskaitījums</td><td class="py-2">Drošs, izsekojams</td><td class="py-2">Lēns, komisijas</td></tr>
+           <tr><td class="py-2">💳 Kredītkarte</td><td class="py-2">Ērti, atlaide</td><td class="py-2">Parāds, procenti</td></tr>
+           <tr><td class="py-2">₿ Kriptovalūta</td><td class="py-2">Decentralizēts</td><td class="py-2">Volatilitāte</td></tr>
+           <tr><td class="py-2">📱 E-maki</td><td class="py-2">Ātri, ērti</td><td class="py-2">Hakeru risks</td></tr>
+          </tbody>
+         </table>
+        </div>
+       </div>
+       <p id="card-hint-3" class="text-xs text-gray-500 mt-2">Klikšķini, lai atvērtu →</p>
+      </div>
+      <!-- Card 4 -->
+      <div class="theory-card rounded-xl p-6 cursor-pointer" onclick="toggleCard(4)">
+       <div class="flex items-center gap-3 mb-4"><span class="text-3xl">🌍</span>
+        <h3 class="text-lg font-semibold text-cyan-400">Aktuālie globālie notikumi</h3>
+       </div>
+       <div id="card-content-4" class="hidden">
+        <div class="space-y-3 text-sm text-gray-300">
+         <div class="bg-red-900/20 rounded-lg p-3 border border-red-800">
+          <p class="text-white font-medium mb-1">🇺🇸 ASV tarifu politika (2025–2026):</p>
+          <p class="text-xs">Trampa administrācija ieviesa plašus importa tarifus (vidēji ~15%), kas ietekmēja globālo tirdzniecību. ASV Augstākā tiesa 2026. februārī atzina IEEPA tarifus par nelikumīgiem.</p>
+         </div>
+         <div class="bg-purple-900/20 rounded-lg p-3 border border-purple-800">
+          <p class="text-white font-medium mb-1">🇪🇺 ES-ASV tirdzniecības attiecības:</p>
+          <p class="text-xs">ES saskaras ar ~10-15% tarifiem uz eksportu uz ASV. Tērauda un alumīnija tarifi paliek spēkā. Nenoteiktība kavē investīcijas.</p>
+         </div>
+         <div class="bg-blue-900/20 rounded-lg p-3 border border-blue-800">
+          <p class="text-white font-medium mb-1">🇱🇻 Latvijas ekonomika:</p>
+          <p class="text-xs">Inflācija 2025: ~3.5%. IKP izaugsme: ~1-2.6%. Bezdarbs: ~6.8%. Aizsardzības izdevumu pieaugums. Algu pieaugums ~5.8%.</p>
+         </div>
+         <div class="bg-green-900/20 rounded-lg p-3 border border-green-800">
+          <p class="text-white font-medium mb-1">💱 Valūtu tirgi:</p>
+          <p class="text-xs">EUR/USD svārstības tarifu nenoteiktības dēļ. Ķīnas juaņa devalvācija ietekmē ES eksportu. Kriptovalūtu regulējuma pastiprināšanās.</p>
+         </div>
+        </div>
+       </div>
+       <p id="card-hint-4" class="text-xs text-gray-500 mt-2">Klikšķini, lai atvērtu →</p>
+      </div>
+     </div>
+     <div class="text-center">
+      <p id="cards-read-status" class="text-gray-400 mb-4">Izlasītas: <span id="cards-read-count">0</span>/4 kartiņas</p>
+      <button id="btn-start-quiz" class="btn-primary text-white font-semibold py-4 px-8 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed" disabled>Sākt testu 🎯</button>
+     </div>
+    </div>
+   </div>
+
+   <!-- SCREEN 3: Quiz -->
+   <div id="screen-quiz" class="min-h-full p-4 hidden">
+    <div class="max-w-3xl mx-auto py-8">
+     <div class="mb-8">
+      <div class="flex justify-between items-center mb-2">
+       <span id="level-badge" class="px-3 py-1 rounded-full text-sm font-medium bg-cyan-900/50 text-cyan-400">1. līmenis: Iesācējs</span>
+       <span id="current-score" class="gold-accent font-bold">0 punkti</span>
+      </div>
+      <div class="bg-gray-800 rounded-full h-3 overflow-hidden">
+       <div id="progress-bar" class="progress-bar h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+      </div>
+      <p id="question-counter" class="text-xs text-gray-500 mt-2 text-center">Jautājums 1 no 21</p>
+     </div>
+     <div class="theory-card rounded-2xl p-6 md:p-8 card-glow">
+      <div id="question-area">
+       <div id="question-type-badge" class="inline-block px-3 py-1 rounded-full text-xs font-medium mb-3 bg-cyan-900/50 text-cyan-400"></div>
+       <h3 id="question-text" class="text-lg md:text-xl font-semibold mb-6"></h3>
+       <div id="options-container" class="space-y-3"></div>
+      </div>
+      <div id="feedback-area" class="hidden mt-6 p-4 rounded-xl">
+       <div class="flex items-start gap-3">
+        <span id="feedback-icon" class="text-2xl"></span>
+        <div>
+         <p id="feedback-title" class="font-semibold mb-1"></p>
+         <p id="feedback-text" class="text-sm text-gray-300"></p>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="text-center mt-6">
+      <button id="btn-next" class="btn-primary text-white font-semibold py-3 px-8 rounded-xl hidden">Nākamais jautājums →</button>
+     </div>
+    </div>
+   </div>
+
+   <!-- SCREEN 4: Results -->
+   <div id="screen-results" class="min-h-full p-4 hidden">
+    <div class="max-w-4xl mx-auto py-8">
+     <div class="text-center mb-8">
+      <div id="result-badge-icon" class="text-7xl mb-4 float-animation">🎉</div>
+      <h2 class="text-2xl md:text-3xl font-bold mb-2">Apsveicam, <span id="result-name"></span>!</h2>
+      <p class="text-gray-400">Tu esi pabeidzis ekonomikas testu</p>
+     </div>
+     <div class="grid md:grid-cols-2 gap-6 mb-8">
+      <div class="theory-card rounded-xl p-6">
+       <h3 class="text-lg font-semibold mb-4 text-center">📊 Tavi rezultāti</h3>
+       <div class="space-y-4">
+        <div class="flex justify-between items-center p-3 bg-gray-800/50 rounded-lg"><span class="text-gray-400">1. līmenis (Iesācējs)</span><span id="result-level1" class="font-bold text-cyan-400">0/70</span></div>
+        <div class="flex justify-between items-center p-3 bg-gray-800/50 rounded-lg"><span class="text-gray-400">2. līmenis (Analītiķis)</span><span id="result-level2" class="font-bold text-cyan-400">0/140</span></div>
+        <div class="flex justify-between items-center p-3 bg-gray-800/50 rounded-lg"><span class="text-gray-400">3. līmenis (Eksperts)</span><span id="result-level3" class="font-bold text-cyan-400">0/210</span></div>
+        <div class="flex justify-between items-center p-4 bg-cyan-900/30 rounded-lg border border-cyan-800"><span class="text-white font-semibold">KOPĀ</span><span id="result-total" class="text-2xl font-bold gold-accent">0/420</span></div>
+       </div>
+      </div>
+      <div class="theory-card rounded-xl p-6">
+       <h3 class="text-lg font-semibold mb-4 text-center">🏆 Tavs nopelnītais statuss</h3>
+       <div id="badge-display" class="badge-card rounded-xl p-6 text-center pulse-glow">
+        <div id="badge-icon" class="text-5xl mb-3">🥉</div>
+        <div id="badge-name" class="text-xl font-bold mb-2">Iesācējs</div>
+        <div id="badge-range" class="text-sm text-gray-400">0-100 punkti</div>
+       </div>
+       <div class="mt-4 space-y-2">
+        <div class="flex items-center gap-2 text-sm"><span>🥉</span><span class="text-gray-400">Iesācējs: 0-100</span></div>
+        <div class="flex items-center gap-2 text-sm"><span>🥈</span><span class="text-gray-400">Analītiķis: 101-210</span></div>
+        <div class="flex items-center gap-2 text-sm"><span>🥇</span><span class="text-gray-400">Eksperts: 211-330</span></div>
+        <div class="flex items-center gap-2 text-sm"><span>💎</span><span class="text-gray-400">Meistars: 331-420</span></div>
+       </div>
+      </div>
+     </div>
+     <div class="theory-card rounded-xl p-6 mb-8">
+      <h3 class="text-lg font-semibold mb-4 text-center">🏅 Klases rezultāti</h3>
+      <div id="leaderboard" class="max-h-64 overflow-auto scroll-container">
+       <table class="w-full text-sm">
+        <thead class="sticky top-0 bg-gray-900">
+         <tr class="border-b border-gray-700">
+          <th class="text-left py-3 px-2">#</th>
+          <th class="text-left py-3">Vārds</th>
+          <th class="text-left py-3">Klase</th>
+          <th class="text-right py-3 px-2">Punkti</th>
+          <th class="text-center py-3">Statuss</th>
+         </tr>
+        </thead>
+        <tbody id="leaderboard-body">
+         <tr class="leaderboard-row"><td colspan="5" class="text-center py-8 text-gray-500">Ielādē datus...</td></tr>
+        </tbody>
+       </table>
+      </div>
+     </div>
+     <div class="text-center"><button id="btn-restart" class="btn-primary text-white font-semibold py-4 px-8 rounded-xl">Spēlēt vēlreiz 🔄</button></div>
+    </div>
+   </div>
+  </div>
+
+  <script>
+    // ============ CONFIGURATION ============
+    const defaultConfig = {
+      game_title: "Ekonomikas Meistars",
+      primary_color: "#00D4FF",
+      secondary_color: "#FFD700",
+      background_color: "#0A0E27",
+      text_color: "#FFFFFF",
+      surface_color: "#1a1f3a"
+    };
+
+    // ============ GAME STATE ============
+    let gameState = {
+      currentScreen: 'registration',
+      player: { name: '', surname: '', className: '' },
+      cardsRead: new Set(),
+      currentLevel: 1,
+      currentQuestion: 0,
+      scores: { level1: 0, level2: 0, level3: 0 },
+      totalScore: 0,
+      allResults: []
+    };
+
+    // ============ QUESTIONS DATABASE ============
+    // Types: "single" (one correct), "multi" (multiple correct), "truefalse", "match" (pair matching), "order" (correct sequence)
+    const questions = {
+      level1: [
+        {
+          type: "single",
+          question: "Ja inflācija ir 5% gadā, cik vērts būs 1000€ pirktspējā pēc 2 gadiem?",
+          options: ["~1102€", "~902€", "~1000€", "~950€"],
+          correct: 1,
+          explanation: "Pirktspēja samazinās katru gadu par 5%. Pēc 2 gadiem: 1000 × 0.95 × 0.95 ≈ 902€ reālajā vērtībā."
+        },
+        {
+          type: "truefalse",
+          question: "Deflācija ir pozitīva parādība ekonomikā, jo cenas samazinās un patērētāji var nopirkt vairāk.",
+          correct: false,
+          explanation: "Deflācija var šķist pozitīva, bet ilgstoša deflācija bremzē ekonomiku – patērētāji atliek pirkumus, uzņēmumu ieņēmumi krītas, algas samazinās, un pieaug reālais parāda slogs."
+        },
+        {
+          type: "single",
+          question: "Kāds ir galvenais risks maksājot ar skaidru naudu?",
+          options: ["Lēns pārskaitījums", "Nevar maksāt tiešsaistē", "Zādzības un nozaudēšanas risks", "Augsti procenti"],
+          correct: 2,
+          explanation: "Skaidrās naudas galvenais risks ir fiziskā zaudēšana vai zādzība. Atšķirībā no digitāliem maksājumiem, naudu nevar atgūt."
+        },
+        {
+          type: "match",
+          question: "Savieno katru jēdzienu ar tā pareizo definīciju:",
+          pairs: [
+            { left: "Inflācija", right: "Cenu līmeņa pieaugums" },
+            { left: "Deflācija", right: "Cenu līmeņa kritums" },
+            { left: "Pirktspēja", right: "Cik var nopirkt par naudu" },
+            { left: "Nominālā vērtība", right: "Summa uz papīra" }
+          ],
+          explanation: "Inflācija = cenu pieaugums, deflācija = cenu kritums, pirktspēja = reālā vērtība, nominālā vērtība = skaitlis bez inflācijas korekcijas."
+        },
+        {
+          type: "single",
+          question: "Ko nozīmē, ja ECB paaugstina procentu likmi?",
+          options: ["Inflācija pieaug", "Bezdarbs samazinās", "Kredīti kļūst dārgāki", "Kredīti kļūst lētāki"],
+          correct: 2,
+          explanation: "Augstākas ECB procentu likmes padara aizņemšanos dārgāku, kas samazina pieprasījumu un palīdz kontrolēt inflāciju."
+        },
+        {
+          type: "single",
+          question: "Kurš faktors NAV lokāls inflācijas ietekmētājs?",
+          options: ["Algu līmenis", "Naftas cenas pasaulē", "Mājokļu cenas", "Valdības nodokļi"],
+          correct: 1,
+          explanation: "Naftas cenas pasaulē ir globāls faktors. Lokālie faktori ir algas, mājokļu cenas un vietējā nodokļu politika."
+        },
+        {
+          type: "order",
+          question: "Sakārto pareizā secībā – kas notiek, kad centrālā banka paaugstina procentu likmi?",
+          items: [
+            "ECB paaugstina bāzes procentu likmi",
+            "Komercbankas palielina kredītu procentus",
+            "Patērētāji un uzņēmumi mazāk aizņemas",
+            "Pieprasījums samazinās, cenas stabilizējas"
+          ],
+          correctOrder: [0, 1, 2, 3],
+          explanation: "Monetārās politikas transmisijas mehānisms: ECB likme → banku likmes → mazāk aizņemšanās → zemāks pieprasījums → zemāka inflācija."
+        }
+      ],
+      level2: [
+        {
+          type: "single",
+          question: "Uzņēmums importē preces no ASV. EUR/USD kurss mainījās no 1.10 uz 1.05. Kā tas ietekmē izmaksas?",
+          options: [
+            "Izmaksas samazinās par 10%",
+            "Izmaksas nemainās",
+            "Izmaksas pieaug par ~4.8%",
+            "Izmaksas samazinās par 5%"
+          ],
+          correct: 2,
+          explanation: "Ja par 1 EUR tagad var nopirkt mazāk USD (1.05 nevis 1.10), tad par tiem pašiem USD jāmaksā vairāk EUR. Pieaugums: (1.10/1.05 - 1) ≈ 4.8%."
+        },
+        {
+          type: "truefalse",
+          question: "ASV importa tarifi uz ES precēm (2025) paaugstina cenas ASV patērētājiem, nevis ES ražotājiem.",
+          correct: true,
+          explanation: "Importa tarifus maksā importētāji, kuri parasti pārnes izmaksas uz patērētājiem. Tāpēc tarifi galvenokārt paaugstina cenas ASV tirgū, lai gan arī ES eksportētāji var zaudēt tirgus daļu."
+        },
+        {
+          type: "single",
+          question: "Latvijas inflācija ir 3.5%, bankas depozīta procenti 1.5%. Kāda ir reālā ietaupījumu vērtības izmaiņa?",
+          options: [
+            "+5% (pieaugums)",
+            "+1.5% (pieaugums)",
+            "0% (nemainās)",
+            "-2% (kritums)"
+          ],
+          correct: 3,
+          explanation: "Reālā procentu likme = nominālā likme − inflācija = 1.5% − 3.5% = −2%. Ietaupījumu pirktspēja samazinās par 2%."
+        },
+        {
+          type: "match",
+          question: "Savieno norēķinu veidu ar situāciju, kurā tas ir VISPIEMĒROTĀKAIS:",
+          pairs: [
+            { left: "Bankas pārskaitījums", right: "Starptautisks B2B maksājums 100 000€" },
+            { left: "Skaidra nauda", right: "Neliels pirkums tirgū 5€" },
+            { left: "Kredītkarte", right: "Ikmēneša abonements tiešsaistē" },
+            { left: "Kriptovalūta", right: "Anonīms P2P darījums" }
+          ],
+          explanation: "Katram norēķinu veidam ir savas priekšrocības: pārskaitījums lieliem B2B darījumiem, skaidra nauda maziem ikdienas pirkumiem, kredītkarte tiešsaistei, kripto – decentralizētiem darījumiem."
+        },
+        {
+          type: "single",
+          question: "Kā naftas cenu pieaugums par 30% ietekmē Latvijas pārtikas cenas?",
+          options: [
+            "Samazina cenas – mazāks pieprasījums",
+            "Cenas svārstās nejauši",
+            "Neietekmē – pārtika nav saistīta ar naftu",
+            "Paaugstina cenas – aug transporta un ražošanas izmaksas"
+          ],
+          correct: 3,
+          explanation: "Naftas cenu pieaugums palielina transporta un lauksaimniecības izmaksas (degviela, mēslojumi), kas paaugstina pārtikas cenas."
+        },
+        {
+          type: "single",
+          question: "2025. gadā ASV Augstākā tiesa atzina Trampa IEEPA tarifus par nelikumīgiem. Kādas bija galvenās sekas?",
+          options: [
+            "Visi tarifi tika nekavējoties atcelti",
+            "Efektīvā tarifu likme samazinājās, bet daži sektoru tarifi palika spēkā",
+            "ASV ekonomika nekavējoties uzlabojās",
+            "ES pārtrauca tirdzniecību ar ASV"
+          ],
+          correct: 1,
+          explanation: "Tiesas lēmums atcēla IEEPA tarifus, bet tarifi uz tēraudu, alumīniju un automobiļiem (Section 232) palika spēkā. Administrācija ieviesa jaunus 15% tarifus caur citu likumu (Section 122)."
+        },
+        {
+          type: "order",
+          question: "Sakārto pareizā secībā – kā globāla tirdzniecības kara eskalācija ietekmē Latvijas ekonomiku:",
+          items: [
+            "ASV ievieš importa tarifus uz ES precēm",
+            "ES eksportētāji zaudē ASV tirgus daļu",
+            "ES ekonomikas izaugsme palēninās",
+            "Latvijas eksports un IKP izaugsme samazinās"
+          ],
+          correctOrder: [0, 1, 2, 3],
+          explanation: "Tirdzniecības kara ietekme izplatās kaskādes veidā: ASV tarifi → ES eksporta kritums → ES ekonomikas palēnināšanās → ietekme uz mazākām ES valstīm kā Latvija."
+        }
+      ],
+      level3: [
+        {
+          type: "multi",
+          question: "2008. gada krīzes laikā Latvija izvēlējās iekšējo devalvāciju. Izvēlies VISUS pareizos faktorus, kas ietekmēja naudas vērtību:",
+          options: [
+            "Algu samazinājums valsts sektorā",
+            "EUR ieviešana",
+            "Nekustamo īpašumu cenu kritums",
+            "Ātrāka eksporta izaugsme",
+            "Bezdarba pieaugums līdz 20%"
+          ],
+          correct: [0, 2, 4],
+          explanation: "Iekšējā devalvācija ietvēra algu samazinājumu, nekustamo īpašumu cenu kritumu un augstu bezdarbu. EUR ieviešana notika tikai 2014. gadā."
+        },
+        {
+          type: "match",
+          question: "Savieno ekonomisko krīzi ar tās galveno ietekmi uz Latviju:",
+          pairs: [
+            { left: "2008. finanšu krīze", right: "IKP kritums -18%, iekšējā devalvācija" },
+            { left: "COVID-19 pandēmija", right: "Piegādes ķēžu traucējumi, digitalizācija" },
+            { left: "ASV tarifu karš 2025", right: "Eksporta nenoteiktība, investīciju kavēšanās" },
+            { left: "Enerģētikas krīze 2022", right: "Strauja inflācija, energocenu pieaugums" }
+          ],
+          explanation: "Katra krīze ietekmē ekonomiku atšķirīgi: 2008 – finanšu sabrukums, COVID – digitalizācija un ķēžu traucējumi, 2025 tarifi – tirdzniecības nenoteiktība, 2022 – enerģijas cenu šoks."
+        },
+        {
+          type: "multi",
+          question: "Analizējot kriptovalūtu maksājumus, izvēlies 3 galvenos riskus:",
+          options: [
+            "Pārāk zemas komisijas",
+            "Augsta cenu volatilitāte",
+            "Kibernoziegumu risks",
+            "Pārāk ātra apstrāde",
+            "Regulējuma nenoteiktība"
+          ],
+          correct: [1, 2, 4],
+          explanation: "Kripto galvenie riski ir volatilitāte (cenu svārstības), kibernoziegumu (hakeru, krāpniecības) risks un regulējuma nenoteiktība."
+        },
+        {
+          type: "single",
+          question: "Latvijas valdība 2025. gadā palielina aizsardzības izdevumus, budžeta deficīts sasniedz ~3% no IKP. Kāda ir galvenā makroekonomiskā sekas?",
+          options: [
+            "Inflācija nekavējoties samazinās",
+            "Bezdarbs strauji pieaug",
+            "Ekspansīva fiskālā politika veicina pieprasījumu, bet palielina valsts parādu",
+            "Ārvalstu investīcijas pilnībā apstājas"
+          ],
+          correct: 2,
+          explanation: "Palielināti valdības izdevumi ir ekspansīva fiskālā politika – tā stimulē ekonomiku un pieprasījumu, bet palielina budžeta deficītu un valsts parādu."
+        },
+        {
+          type: "multi",
+          question: "Scenārijs: Klients saņem algu USD, dzīvo Latvijā, maksā hipotēku EUR. Kuri riski viņam ir aktuāli?",
+          options: [
+            "Reputācijas risks – uzticības zudums",
+            "Valūtas risks – USD/EUR kursa svārstības",
+            "Procentu likmju risks – ECB likmes maiņa",
+            "Likviditātes risks – nespēja pārvērst aktīvus",
+            "Inflācijas risks – pirktspējas zudums"
+          ],
+          correct: [1, 2, 4],
+          explanation: "Klientam aktuāli: valūtas risks (alga USD, maksājumi EUR), procentu likmju risks (mainīga hipotēkas likme), inflācijas risks (izmaksu pieaugums)."
+        },
+        {
+          type: "order",
+          question: "Sakārto secībā no MAZĀKĀ riska uz LIELĀKO – kuri aktīvi labāk saglabā vērtību 10 gadu periodā ar 5% inflāciju:",
+          items: [
+            "Skaidrā nauda bankas kontā (0% procenti)",
+            "Valdības obligācijas (3% ienesīgums)",
+            "Diversificēts akciju portfelis",
+            "Nekustamais īpašums lielā pilsētā"
+          ],
+          correctOrder: [0, 1, 2, 3],
+          explanation: "No sliktākā uz labāko inflācijas aizsardzību: skaidrā nauda (zaudē visvairāk) → obligācijas (daļēji kompensē) → akcijas (vēsturiski pārspēj inflāciju) → nekustamais īpašums (reāls aktīvs, kas mēdz augt līdzi vai pārspēt inflāciju)."
+        },
+        {
+          type: "truefalse",
+          question: "Ja Ķīnas juaņa vērtība samazinās pret EUR, tad Ķīnas eksports uz Eiropu kļūst dārgāks Eiropas patērētājiem.",
+          correct: false,
+          explanation: "Otrādi – ja juaņa vērtība krītas, Ķīnas preces kļūst LĒTĀKAS Eiropas patērētājiem, jo par 1 EUR var nopirkt vairāk juaņu. Tas padara Ķīnas eksportu konkurētspējīgāku, bet apgrūtina Eiropas ražotāju konkurenci."
+        }
+      ]
+    };
+
+    const QUESTIONS_PER_LEVEL = 7;
+    const TOTAL_QUESTIONS = QUESTIONS_PER_LEVEL * 3; // 21
+
+    // ============ ELEMENT SDK INITIALIZATION ============
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (config) => {
+          const title = config.game_title || defaultConfig.game_title;
+          const titleEl = document.getElementById('game-title');
+          if (titleEl) {
+            titleEl.innerHTML = `<span class="text-cyan-400">${title.split(' ')[0] || 'Ekonomikas'}</span> <span class="gold-accent">${title.split(' ').slice(1).join(' ') || 'Meistars'}</span>`;
+          }
+        },
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+            { get: () => config.surface_color || defaultConfig.surface_color, set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+            { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+            { get: () => config.primary_color || defaultConfig.primary_color, set: (v) => { config.primary_color = v; window.elementSdk.setConfig({ primary_color: v }); } },
+            { get: () => config.secondary_color || defaultConfig.secondary_color, set: (v) => { config.secondary_color = v; window.elementSdk.setConfig({ secondary_color: v }); } }
+          ],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ["game_title", config.game_title || defaultConfig.game_title]
+        ])
+      });
+    }
+
+    // ============ DATA SDK INITIALIZATION ============
+    const dataHandler = {
+      onDataChanged(data) {
+        gameState.allResults = data.sort((a, b) => (b.total_points || 0) - (a.total_points || 0));
+        updateLeaderboard();
+      }
+    };
+
+    async function initDataSdk() {
+      if (window.dataSdk) {
+        const result = await window.dataSdk.init(dataHandler);
+        if (!result.isOk) console.error('Data SDK init failed:', result.error);
+      }
+    }
+    initDataSdk();
+
+    // ============ SCREEN MANAGEMENT ============
+    function showScreen(screenId) {
+      document.querySelectorAll('[id^="screen-"]').forEach(s => s.classList.add('hidden'));
+      document.getElementById(`screen-${screenId}`).classList.remove('hidden');
+      gameState.currentScreen = screenId;
+    }
+
+    // ============ REGISTRATION ============
+    document.getElementById('btn-start').addEventListener('click', () => {
+      const name = document.getElementById('input-name').value.trim();
+      const surname = document.getElementById('input-surname').value.trim();
+      const className = document.getElementById('input-class').value.trim();
+      if (!name || !surname || !className) {
+        document.getElementById('reg-error').classList.remove('hidden');
+        return;
+      }
+      document.getElementById('reg-error').classList.add('hidden');
+      gameState.player = { name, surname, className };
+      showScreen('theory');
+    });
+
+    // ============ THEORY CARDS ============
+    function toggleCard(cardNum) {
+      const content = document.getElementById(`card-content-${cardNum}`);
+      const hint = document.getElementById(`card-hint-${cardNum}`);
+      if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        hint.textContent = '✓ Izlasīts';
+        hint.classList.add('text-green-400');
+        gameState.cardsRead.add(cardNum);
+      } else {
+        content.classList.add('hidden');
+        hint.textContent = 'Klikšķini, lai atvērtu →';
+        hint.classList.remove('text-green-400');
+      }
+      document.getElementById('cards-read-count').textContent = gameState.cardsRead.size;
+      document.getElementById('btn-start-quiz').disabled = gameState.cardsRead.size < 4;
+    }
+
+    document.getElementById('btn-start-quiz').addEventListener('click', () => startQuiz());
+
+    // ============ QUIZ LOGIC ============
+    function startQuiz() {
+      gameState.currentLevel = 1;
+      gameState.currentQuestion = 0;
+      gameState.scores = { level1: 0, level2: 0, level3: 0 };
+      gameState.totalScore = 0;
+      showScreen('quiz');
+      displayQuestion();
+    }
+
+    function getCurrentQuestions() {
+      if (gameState.currentLevel === 1) return questions.level1;
+      if (gameState.currentLevel === 2) return questions.level2;
+      return questions.level3;
+    }
+
+    function getPointsPerQuestion() {
+      if (gameState.currentLevel === 1) return 10;
+      if (gameState.currentLevel === 2) return 20;
+      return 30;
+    }
+
+    function getLevelName() {
+      if (gameState.currentLevel === 1) return "1. līmenis: Iesācējs";
+      if (gameState.currentLevel === 2) return "2. līmenis: Analītiķis";
+      return "3. līmenis: Eksperts";
+    }
+
+    function getTypeBadge(type) {
+      switch(type) {
+        case 'single': return '🎯 Izvēlies vienu';
+        case 'multi': return '✅ Izvēlies vairākus';
+        case 'truefalse': return '⚖️ Patiess vai nepatiess';
+        case 'match': return '🔗 Savieno pārus';
+        case 'order': return '📊 Sakārto secībā';
+        default: return '';
+      }
+    }
+
+    function displayQuestion() {
+      const currentQuestions = getCurrentQuestions();
+      const q = currentQuestions[gameState.currentQuestion];
+      
+      document.getElementById('level-badge').textContent = getLevelName();
+      document.getElementById('current-score').textContent = `${gameState.totalScore} punkti`;
+      
+      const currentOverall = (gameState.currentLevel - 1) * QUESTIONS_PER_LEVEL + gameState.currentQuestion + 1;
+      document.getElementById('question-counter').textContent = `Jautājums ${currentOverall} no ${TOTAL_QUESTIONS}`;
+      document.getElementById('progress-bar').style.width = `${(currentOverall / TOTAL_QUESTIONS) * 100}%`;
+      
+      document.getElementById('question-type-badge').textContent = getTypeBadge(q.type || 'single');
+      document.getElementById('question-text').textContent = q.question;
+      
+      const container = document.getElementById('options-container');
+      container.innerHTML = '';
+      
+      document.getElementById('feedback-area').classList.add('hidden');
+      document.getElementById('btn-next').classList.add('hidden');
+
+      const type = q.type || 'single';
+
+      if (type === 'single') {
+        renderSingleChoice(q, container);
+      } else if (type === 'multi') {
+        renderMultiChoice(q, container);
+      } else if (type === 'truefalse') {
+        renderTrueFalse(q, container);
+      } else if (type === 'match') {
+        renderMatch(q, container);
+      } else if (type === 'order') {
+        renderOrder(q, container);
+      }
+    }
+
+    // --- SINGLE CHOICE ---
+    function renderSingleChoice(q, container) {
+      q.options.forEach((option, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn w-full text-left p-4 rounded-xl transition-all';
+        btn.innerHTML = `<span class="font-medium text-cyan-400 mr-2">${String.fromCharCode(65 + index)}.</span> ${option}`;
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.option-btn').forEach((b, i) => {
+            b.disabled = true;
+            if (i === q.correct) b.classList.add('correct');
+            else if (i === index && i !== q.correct) b.classList.add('incorrect');
+          });
+          const isCorrect = index === q.correct;
+          showFeedback(isCorrect, q.explanation);
+          updateScore(isCorrect);
+        });
+        container.appendChild(btn);
+      });
+    }
+
+    // --- MULTI CHOICE ---
+    function renderMultiChoice(q, container) {
+      const selectedOptions = new Set();
+      q.options.forEach((option, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn w-full text-left p-4 rounded-xl transition-all';
+        btn.innerHTML = `<span class="font-medium text-cyan-400 mr-2">${String.fromCharCode(65 + index)}.</span> ${option}`;
+        btn.addEventListener('click', () => {
+          if (selectedOptions.has(index)) {
+            selectedOptions.delete(index);
+            btn.classList.remove('selected');
+          } else {
+            selectedOptions.add(index);
+            btn.classList.add('selected');
+          }
+        });
+        container.appendChild(btn);
+      });
+      const submitBtn = document.createElement('button');
+      submitBtn.className = 'btn-primary w-full text-white font-semibold py-3 rounded-xl mt-4';
+      submitBtn.textContent = 'Apstiprināt atbildes';
+      submitBtn.addEventListener('click', () => {
+        const correctSet = new Set(q.correct);
+        const isCorrect = selectedOptions.size === correctSet.size && [...selectedOptions].every(i => correctSet.has(i));
+        document.querySelectorAll('.option-btn').forEach((btn, index) => {
+          if (correctSet.has(index)) btn.classList.add('correct');
+          else if (selectedOptions.has(index)) btn.classList.add('incorrect');
+          btn.disabled = true;
+        });
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.5';
+        showFeedback(isCorrect, q.explanation);
+        updateScore(isCorrect);
+      });
+      container.appendChild(submitBtn);
+    }
+
+    // --- TRUE/FALSE ---
+    function renderTrueFalse(q, container) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'flex gap-4';
+      
+      const btnTrue = document.createElement('button');
+      btnTrue.className = 'tf-btn tf-true';
+      btnTrue.textContent = '✓ Patiess';
+      
+      const btnFalse = document.createElement('button');
+      btnFalse.className = 'tf-btn tf-false';
+      btnFalse.textContent = '✗ Nepatiess';
+
+      function handleTF(answer) {
+        const isCorrect = answer === q.correct;
+        btnTrue.disabled = true;
+        btnFalse.disabled = true;
+        
+        if (q.correct === true) {
+          btnTrue.classList.add('was-correct');
+          if (!isCorrect) btnFalse.classList.add('was-incorrect');
+        } else {
+          btnFalse.classList.add('was-correct');
+          if (!isCorrect) btnTrue.classList.add('was-incorrect');
+        }
+        
+        showFeedback(isCorrect, q.explanation);
+        updateScore(isCorrect);
+      }
+
+      btnTrue.addEventListener('click', () => handleTF(true));
+      btnFalse.addEventListener('click', () => handleTF(false));
+      
+      wrapper.appendChild(btnTrue);
+      wrapper.appendChild(btnFalse);
+      container.appendChild(wrapper);
+    }
+
+    // --- MATCH ---
+    function renderMatch(q, container) {
+      const pairs = q.pairs;
+      const shuffledRight = [...pairs.map((p, i) => ({ text: p.right, origIndex: i }))].sort(() => Math.random() - 0.5);
+      
+      let selectedLeft = null;
+      let matchedCount = 0;
+      const matched = new Set();
+      
+      const grid = document.createElement('div');
+      grid.className = 'grid grid-cols-2 gap-3';
+      
+      const leftCol = document.createElement('div');
+      leftCol.className = 'space-y-3';
+      const rightCol = document.createElement('div');
+      rightCol.className = 'space-y-3';
+
+      const leftItems = [];
+      const rightItems = [];
+
+      pairs.forEach((pair, i) => {
+        const item = document.createElement('div');
+        item.className = 'match-item text-sm';
+        item.textContent = pair.left;
+        item.dataset.index = i;
+        item.addEventListener('click', () => {
+          if (matched.has(i)) return;
+          leftItems.forEach(li => li.classList.remove('active'));
+          item.classList.add('active');
+          selectedLeft = i;
+        });
+        leftItems.push(item);
+        leftCol.appendChild(item);
+      });
+
+      shuffledRight.forEach((sr) => {
+        const item = document.createElement('div');
+        item.className = 'match-item text-sm';
+        item.textContent = sr.text;
+        item.dataset.origIndex = sr.origIndex;
+        item.addEventListener('click', () => {
+          if (selectedLeft === null || matched.has(selectedLeft)) return;
+          if (selectedLeft === sr.origIndex) {
+            leftItems[selectedLeft].classList.remove('active');
+            leftItems[selectedLeft].classList.add('matched');
+            item.classList.add('matched');
+            matched.add(selectedLeft);
+            matchedCount++;
+            selectedLeft = null;
+            
+            if (matchedCount === pairs.length) {
+              showFeedback(true, q.explanation);
+              updateScore(true);
+            }
+          } else {
+            item.classList.add('wrong-match');
+            setTimeout(() => item.classList.remove('wrong-match'), 500);
+            // On wrong match after all attempts
+          }
+        });
+        rightItems.push(item);
+        rightCol.appendChild(item);
+      });
+
+      grid.appendChild(leftCol);
+      grid.appendChild(rightCol);
+      container.appendChild(grid);
+
+      // Add a submit button for giving up / confirming partial
+      const hintText = document.createElement('p');
+      hintText.className = 'text-xs text-gray-500 mt-3 text-center';
+      hintText.textContent = 'Klikšķini kreisajā pusē, tad izvēlies atbilstošo labajā pusē';
+      container.appendChild(hintText);
+
+      const giveUpBtn = document.createElement('button');
+      giveUpBtn.className = 'btn-primary w-full text-white font-semibold py-3 rounded-xl mt-4 opacity-70';
+      giveUpBtn.textContent = 'Apstiprināt (ja nevari atrast visus)';
+      giveUpBtn.addEventListener('click', () => {
+        if (matchedCount === pairs.length) return;
+        // Show correct answers
+        leftItems.forEach((li, i) => {
+          if (!matched.has(i)) li.classList.add('incorrect');
+        });
+        giveUpBtn.disabled = true;
+        giveUpBtn.style.opacity = '0.3';
+        const isCorrect = matchedCount === pairs.length;
+        showFeedback(isCorrect, q.explanation);
+        updateScore(isCorrect);
+      });
+      container.appendChild(giveUpBtn);
+    }
+
+    // --- ORDER ---
+    function renderOrder(q, container) {
+      const items = q.items.map((text, i) => ({ text, origIndex: i }));
+      // Shuffle
+      for (let i = items.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [items[i], items[j]] = [items[j], items[i]];
+      }
+
+      const listEl = document.createElement('div');
+      listEl.className = 'space-y-2';
+
+      items.forEach((item, idx) => {
+        const el = document.createElement('div');
+        el.className = 'order-item flex items-center text-sm';
+        el.draggable = true;
+        el.dataset.currentPos = idx;
+        el.dataset.origIndex = item.origIndex;
+        el.innerHTML = `<span class="order-num">${idx + 1}</span><span class="flex-1">${item.text}</span>`;
+        
+        el.addEventListener('dragstart', (e) => {
+          el.classList.add('dragging');
+          e.dataTransfer.setData('text/plain', idx.toString());
+        });
+        el.addEventListener('dragend', () => el.classList.remove('dragging'));
+        el.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          el.classList.add('drag-over');
+        });
+        el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
+        el.addEventListener('drop', (e) => {
+          e.preventDefault();
+          el.classList.remove('drag-over');
+          const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
+          const toIdx = parseInt(el.dataset.currentPos);
+          if (fromIdx === toIdx) return;
+          swapOrderItems(listEl, fromIdx, toIdx);
+        });
+
+        // Touch support
+        let touchStartY = 0;
+        el.addEventListener('touchstart', (e) => {
+          touchStartY = e.touches[0].clientY;
+          el.classList.add('dragging');
+        }, { passive: true });
+        el.addEventListener('touchend', (e) => {
+          el.classList.remove('dragging');
+          const touchEndY = e.changedTouches[0].clientY;
+          const diff = touchEndY - touchStartY;
+          if (Math.abs(diff) > 30) {
+            const currentIdx = parseInt(el.dataset.currentPos);
+            const targetIdx = diff > 0 ? Math.min(currentIdx + 1, items.length - 1) : Math.max(currentIdx - 1, 0);
+            if (currentIdx !== targetIdx) swapOrderItems(listEl, currentIdx, targetIdx);
+          }
+        }, { passive: true });
+
+        listEl.appendChild(el);
+      });
+
+      container.appendChild(listEl);
+      
+      const hint = document.createElement('p');
+      hint.className = 'text-xs text-gray-500 mt-2 text-center';
+      hint.textContent = 'Velc un nomet vai svelp, lai pārkārtotu elementus';
+      container.appendChild(hint);
+
+      const submitBtn = document.createElement('button');
+      submitBtn.className = 'btn-primary w-full text-white font-semibold py-3 rounded-xl mt-4';
+      submitBtn.textContent = 'Apstiprināt secību';
+      submitBtn.addEventListener('click', () => {
+        const children = listEl.querySelectorAll('.order-item');
+        const userOrder = Array.from(children).map(c => parseInt(c.dataset.origIndex));
+        const isCorrect = userOrder.every((val, idx) => val === q.correctOrder[idx]);
+        
+        children.forEach((c, idx) => {
+          const origIdx = parseInt(c.dataset.origIndex);
+          if (origIdx === q.correctOrder[idx]) c.classList.add('correct-order');
+          else c.classList.add('incorrect-order');
+          c.draggable = false;
+        });
+        
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.5';
+        showFeedback(isCorrect, q.explanation);
+        updateScore(isCorrect);
+      });
+      container.appendChild(submitBtn);
+    }
+
+    function swapOrderItems(listEl, fromIdx, toIdx) {
+      const children = Array.from(listEl.children);
+      const fromEl = children[fromIdx];
+      const toEl = children[toIdx];
+      
+      // Swap in DOM
+      if (fromIdx < toIdx) {
+        listEl.insertBefore(fromEl, toEl.nextSibling);
+      } else {
+        listEl.insertBefore(fromEl, toEl);
+      }
+      
+      // Update positions and numbers
+      Array.from(listEl.children).forEach((child, i) => {
+        child.dataset.currentPos = i;
+        child.querySelector('.order-num').textContent = i + 1;
+      });
+    }
+
+    // ============ FEEDBACK & SCORING ============
+    function showFeedback(isCorrect, explanation) {
+      const feedbackArea = document.getElementById('feedback-area');
+      const feedbackIcon = document.getElementById('feedback-icon');
+      const feedbackTitle = document.getElementById('feedback-title');
+      const feedbackText = document.getElementById('feedback-text');
+      
+      feedbackArea.classList.remove('hidden', 'bg-green-900/30', 'bg-red-900/30');
+      
+      if (isCorrect) {
+        feedbackArea.classList.add('bg-green-900/30');
+        feedbackIcon.textContent = '✅';
+        feedbackTitle.textContent = 'Pareizi!';
+        feedbackTitle.className = 'font-semibold mb-1 text-green-400';
+      } else {
+        feedbackArea.classList.add('bg-red-900/30');
+        feedbackIcon.textContent = '❌';
+        feedbackTitle.textContent = 'Nepareizi';
+        feedbackTitle.className = 'font-semibold mb-1 text-red-400';
+      }
+      
+      feedbackText.textContent = explanation;
+      document.getElementById('btn-next').classList.remove('hidden');
+    }
+
+    function updateScore(isCorrect) {
+      if (isCorrect) {
+        const points = getPointsPerQuestion();
+        gameState.totalScore += points;
+        if (gameState.currentLevel === 1) gameState.scores.level1 += points;
+        else if (gameState.currentLevel === 2) gameState.scores.level2 += points;
+        else gameState.scores.level3 += points;
+        document.getElementById('current-score').textContent = `${gameState.totalScore} punkti`;
+      }
+    }
+
+    document.getElementById('btn-next').addEventListener('click', () => {
+      gameState.currentQuestion++;
+      if (gameState.currentQuestion >= QUESTIONS_PER_LEVEL) {
+        gameState.currentQuestion = 0;
+        gameState.currentLevel++;
+        if (gameState.currentLevel > 3) {
+          finishGame();
+          return;
+        }
+      }
+      displayQuestion();
+    });
+
+    // ============ GAME COMPLETION ============
+    async function finishGame() {
+      showScreen('results');
+      
+      document.getElementById('result-name').textContent = gameState.player.name;
+      document.getElementById('result-level1').textContent = `${gameState.scores.level1}/70`;
+      document.getElementById('result-level2').textContent = `${gameState.scores.level2}/140`;
+      document.getElementById('result-level3').textContent = `${gameState.scores.level3}/210`;
+      document.getElementById('result-total').textContent = `${gameState.totalScore}/420`;
+      
+      let badge, badgeIcon, badgeRange;
+      if (gameState.totalScore <= 100) {
+        badge = 'Iesācējs'; badgeIcon = '🥉'; badgeRange = '0-100 punkti';
+      } else if (gameState.totalScore <= 210) {
+        badge = 'Analītiķis'; badgeIcon = '🥈'; badgeRange = '101-210 punkti';
+      } else if (gameState.totalScore <= 330) {
+        badge = 'Eksperts'; badgeIcon = '🥇'; badgeRange = '211-330 punkti';
+      } else {
+        badge = 'Ekonomists-Meistars'; badgeIcon = '💎'; badgeRange = '331-420 punkti';
+      }
+      
+      document.getElementById('badge-icon').textContent = badgeIcon;
+      document.getElementById('badge-name').textContent = badge;
+      document.getElementById('badge-range').textContent = badgeRange;
+      document.getElementById('result-badge-icon').textContent = badgeIcon;
+      
+      if (window.dataSdk) {
+        if (gameState.allResults.length < 999) {
+          const result = await window.dataSdk.create({
+            name: gameState.player.name,
+            surname: gameState.player.surname,
+            class_name: gameState.player.className,
+            level1_points: gameState.scores.level1,
+            level2_points: gameState.scores.level2,
+            level3_points: gameState.scores.level3,
+            total_points: gameState.totalScore,
+            badge: badge,
+            completion_date: new Date().toISOString()
+          });
+          if (!result.isOk) console.error('Failed to save result:', result.error);
+        }
+      }
+    }
+
+    function updateLeaderboard() {
+      const tbody = document.getElementById('leaderboard-body');
+      if (gameState.allResults.length === 0) {
+        tbody.innerHTML = '<tr class="leaderboard-row"><td colspan="5" class="text-center py-8 text-gray-500">Nav rezultātu</td></tr>';
+        return;
+      }
+      tbody.innerHTML = '';
+      gameState.allResults.forEach((result, index) => {
+        const row = document.createElement('tr');
+        row.className = 'leaderboard-row';
+        let badgeIcon = '🥉';
+        if (result.total_points > 330) badgeIcon = '💎';
+        else if (result.total_points > 210) badgeIcon = '🥇';
+        else if (result.total_points > 100) badgeIcon = '🥈';
+        const isCurrentPlayer = result.name === gameState.player.name && result.surname === gameState.player.surname;
+        row.innerHTML = `
+          <td class="py-3 px-2 ${isCurrentPlayer ? 'text-cyan-400 font-bold' : ''}">${index + 1}</td>
+          <td class="py-3 ${isCurrentPlayer ? 'text-cyan-400 font-bold' : ''}">${result.name} ${result.surname}</td>
+          <td class="py-3 text-gray-400">${result.class_name || '-'}</td>
+          <td class="py-3 px-2 text-right font-bold ${isCurrentPlayer ? 'gold-accent' : ''}">${result.total_points || 0}</td>
+          <td class="py-3 text-center">${badgeIcon}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // ============ RESTART ============
+    document.getElementById('btn-restart').addEventListener('click', () => {
+      gameState.cardsRead.clear();
+      gameState.currentLevel = 1;
+      gameState.currentQuestion = 0;
+      gameState.scores = { level1: 0, level2: 0, level3: 0 };
+      gameState.totalScore = 0;
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById(`card-content-${i}`).classList.add('hidden');
+        const hint = document.getElementById(`card-hint-${i}`);
+        hint.textContent = 'Klikšķini, lai atvērtu →';
+        hint.classList.remove('text-green-400');
+      }
+      document.getElementById('cards-read-count').textContent = '0';
+      document.getElementById('btn-start-quiz').disabled = true;
+      showScreen('theory');
+    });
+  </script>
+ </body>
+</html>
